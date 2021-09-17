@@ -17,6 +17,7 @@ type ClaimSession struct {
 	User
 	PrivilegeRolUser
 }
+
 type IUserLogin struct {
 	IdUser string `json:"idUser"`
 }

@@ -432,9 +432,9 @@ var GetUser = func(w http.ResponseWriter, r *http.Request) {
 	// fmt.Println(usersservice.UpdateOne(result))
 	// fmt.Println(result.ID)
 
-	newUser := models.IUserLogin{
+	newUser := authinterfaces.User{
 		DateAdd:   time.Now(),
-		IdCompany: "55555555",
+		IdCompany: "61451539f4b53099a6f0969c",
 		IdRol:     "144444",
 		Image:     "imagen",
 		LastLogin: time.Now(),
@@ -442,7 +442,8 @@ var GetUser = func(w http.ResponseWriter, r *http.Request) {
 		Name:      "NOmbre",
 		Password:  utils.Encript([]byte("231154")),
 		Status:    1,
-		NickName:  "usuario1",
+		NickName:  "Admin1",
+		Email:     "castro2354@gmail.com",
 	}
 
 	result2 := usersservice.Add(newUser)
