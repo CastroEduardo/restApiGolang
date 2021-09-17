@@ -3,6 +3,8 @@ package authcontroller
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"net"
 	"net/http"
 	"os"
 	genericlistservice "rest-api-golang/src/dbContext/genericListService"
@@ -16,6 +18,7 @@ import (
 	"rest-api-golang/src/models/authinterfaces"
 	"rest-api-golang/src/utils"
 	u "rest-api-golang/src/utils"
+	"strings"
 	"time"
 
 	"github.com/dgrijalva/jwt-go"
@@ -25,7 +28,14 @@ import (
 
 // Login ... This function is just to handle the incoming request
 var Login = func(w http.ResponseWriter, r *http.Request) {
+	//Get IP from the X-REAL-IP header
+	//Get IP from RemoteAddr
+	ipRequest, _, err1 := net.SplitHostPort(r.RemoteAddr)
+	if err1 != nil {
+		log.Fatal(err1)
+	}
 
+	//fmt.Println("==>" + ipRequest)
 	var tokenString string
 	var expireDate time.Time
 	var msg string
@@ -88,22 +98,22 @@ var Login = func(w http.ResponseWriter, r *http.Request) {
 			userFound.LastLogin = time.Now()
 			usersservice.UpdateLastLogin(userFound)
 
-			logUser := "Inicio Session .."
+			logUser := "User Loggin ok.." + `FROM IP :  ` + ipRequest
 			logsuserservice.Add(1, checkUser.ID, checkUser.IdCompany, logUser)
 
-			msg = "Usuario Logeado"
+			msg = "Logging User."
 
 		} else {
 
-			logUser := "Intento Loggin User Desactivado .."
+			logUser := "Try logging in User Disabled .." + `FROM IP : ` + ipRequest
 			logsuserservice.Add(1, checkUser.ID, checkUser.IdCompany, logUser)
-			msg = "Usuario Desactivado.."
+			msg = "Disabled User"
 		}
 
 	} else {
-		logSystem := "Intento Login Fallido usuario : " + user.User + "  "
+		logSystem := "Login Failed: To User: ( " + user.User + " )  " + `FROM IP:` + ipRequest
 		logssystemservice.Add(3, logSystem)
-		msg = "Usuario Invalido"
+		msg = "Invalid User.."
 	}
 
 	//fmt.Println(checkUser)
@@ -442,8 +452,8 @@ var GetUser = func(w http.ResponseWriter, r *http.Request) {
 		Name:      "NOmbre",
 		Password:  utils.Encript([]byte("231154")),
 		Status:    1,
-		NickName:  "Admin1",
-		Email:     "castro2354@gmail.com",
+		NickName:  strings.ToLower("Admin1"),
+		Email:     strings.ToLower("castro2354@gmail.com"),
 	}
 
 	result2 := usersservice.Add(newUser)
