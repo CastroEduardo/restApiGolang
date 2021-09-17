@@ -1,0 +1,121 @@
+package main
+
+import (
+	"fmt"
+	"os"
+	"rest-api-golang/ServicesDb/UserService"
+	m "rest-api-golang/conectmongo"
+	"rest-api-golang/src/utils"
+	"strconv"
+	"time"
+
+	"go.mongodb.org/mongo-driver/mongo"
+)
+
+// Profile - is the memory representation of one user profile
+type Profile struct {
+	ID          string    `json:"id,omitempty" bson:"_id,omitempty"`
+	Name        string    `json: "username"`
+	Password    string    `json: "password"`
+	Age         int       `json: "age"`
+	LastUpdated time.Time `json: "lastTime"`
+}
+
+// type Post struct {
+// 	Title       string        `json:"title" bson:"title"`
+// 	SlugUrl     string        `json:"slug_url" bson:"slug_url"`
+// 	Content     string        `json:"content" bson:"content"`
+// 	PublishedAt time.Time     `json:"published_at" bson:"published_at"`
+// 	ID          bson.ObjectId `json:"id" bson:"_id"`
+// 	CreatedAt   time.Time     `json:"created_at,omitempty" bson:"created_at"`
+// 	UpdatedAt   time.Time     `json:"updated_at,omitempty" bson:"updated_at"`
+// }
+
+var client *mongo.Client
+
+func main() {
+
+	//send envairoment
+	os.Setenv("APP_PORT", "1111")
+	os.Setenv("TOKEN_HASH", "thisIsTheJwtPassword")
+	os.Setenv("DB_NAME", "golangTest")
+
+	connect := m.Connect()
+	fmt.Println(connect)
+	client = m.Client
+	time.Sleep(1 * time.Second)
+
+	for {
+
+		result := utils.GetPwd()
+		fmt.Println(string(result))
+		fmt.Println("Ingrese un Numero: ")
+		var pass string
+		_, err := fmt.Scan(&pass)
+		if err != nil {
+			//log.Println(err)
+		}
+
+		// fmt.Println(pass)
+		// //s.Client = client
+
+		user := UserService.GetList()
+
+		for i, item := range user {
+			fmt.Println(item.Name, strconv.Itoa(i))
+		}
+	}
+
+	// context2=m.Context
+
+	// status := m.Status()
+	// fmt.Println(status)
+
+	// collection := client.Database("golangTest").Collection("heroes")
+	// documentReturned := collection.FindOne(context.TODO(), bson.M{"name": "nombre3"})
+	// var hero Profile
+	// documentReturned.Decode(&hero)
+	// fmt.Println(hero.ID)
+
+	//collection := client.Database("golangTest").Collection("trainers")
+
+	// // err = client.Ping(context.TODO(), nil)
+
+	// result, err := collection.Find(context.Background(), bson.M{})
+	// if err != nil {
+	// 	fmt.Println(result)
+	// } else {
+	// 	fmt.Println(err)
+	// }
+	// fmt.Println(result.ID)
+
+	// hero := &Profile{
+	// 	Name:     "nombre3",
+	// 	Age:      30,
+	// 	Password: "clave largo",
+	// }
+
+	// collection := client.Database("golangTest").Collection("heroes")
+
+	// insertResult, err := collection.InsertOne(context.Background(), hero)
+	// if err != nil {
+	// 	log.Fatalln("Error on inserting new Hero", err)
+	// }
+
+	// fmt.Println(insertResult, hero.ID)
+	// fmt.Println(hero.ID)
+
+}
+
+// func SendNew(client *mongo.Client, filter bson.M)Profile{
+
+// 	fmt.Println(
+// }
+
+// func ReturnOneHero(client *mongo.Client, filter bson.M) Profile {
+// 	var hero Profile
+// 	collection := client.Database("golangTest").Collection("heroes")
+// 	documentReturned := collection.FindOne(context.TODO(), filter)
+// 	documentReturned.Decode(&hero)
+// 	return hero
+// }
